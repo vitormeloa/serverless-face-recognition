@@ -1,0 +1,7 @@
+{
+  "name": "lambda-register-face",
+  "version": "1.0.0",
+  "description": "Register face Lambda function",
+  "main": "index.js",
+  "dependencies": {}
+}
