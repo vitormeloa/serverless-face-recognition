@@ -23,6 +23,9 @@ Both deployments expose `/register` and `/recognize` HTTP endpoints through the 
    export AWS_SECRET_ACCESS_KEY=...
    export AWS_DEFAULT_REGION=us-east-1
    ```
+   Rekognition isn't available in every region (for example `sa-east-1`). If your
+   default region lacks Rekognition, set `rekognition_region` in `terraform.tfvars`
+   to a supported region such as `us-east-1`.
 3. Deploy:
    ```bash
    cd terraform/aws

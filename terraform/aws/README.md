@@ -35,10 +35,13 @@ face-recognition-terraform/
 1. **Install Terraform** – See [terraform.io](https://www.terraform.io/downloads.html).
 2. **Configure AWS credentials** (environment variables or shared credentials file):
    ```bash
-   export AWS_ACCESS_KEY_ID=... 
-   export AWS_SECRET_ACCESS_KEY=...
-   export AWS_DEFAULT_REGION=us-east-1
-   ```
+  export AWS_ACCESS_KEY_ID=...
+  export AWS_SECRET_ACCESS_KEY=...
+  export AWS_DEFAULT_REGION=us-east-1
+  ```
+   If your default region does not support Rekognition (e.g., `sa-east-1`),
+   edit `terraform.tfvars` and set `rekognition_region` to a supported region
+   like `us-east-1` so the Rekognition collection is created there.
 3. **Initialize**:
    ```bash
    terraform init

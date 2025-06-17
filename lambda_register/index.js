@@ -1,6 +1,9 @@
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
-const rekognition = new AWS.Rekognition();
+// Rekognition may run in a different region than the Lambda itself.
+// Use REKOGNITION_REGION to override if needed.
+const rekognitionRegion = process.env.REKOGNITION_REGION || process.env.AWS_REGION;
+const rekognition = new AWS.Rekognition({ region: rekognitionRegion });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const sns = new AWS.SNS();
 

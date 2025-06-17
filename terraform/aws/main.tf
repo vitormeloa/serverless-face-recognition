@@ -15,6 +15,11 @@ provider "aws" {
   region = var.region
 }
 
+provider "aws" {
+  alias  = "rekognition"
+  region = var.rekognition_region
+}
+
 #############################
 # This AWS-specific config complements the GCP version under ../gcp
 #############################
@@ -65,6 +70,7 @@ resource "aws_dynamodb_table" "face_metadata" {
 # Rekognition collection
 #################################
 resource "aws_rekognition_collection" "faces" {
+  provider      = aws.rekognition
   collection_id = var.face_collection_id
   tags          = var.project_tags
 }
@@ -196,6 +202,7 @@ resource "aws_lambda_function" "register_face" {
       DYNAMO_TABLE_NAME  = aws_dynamodb_table.face_metadata.name
       SNS_TOPIC_ARN      = aws_sns_topic.face_registration.arn
       BUCKET_NAME        = aws_s3_bucket.face_images.bucket
+      REKOGNITION_REGION = var.rekognition_region
     }
   }
   tags = var.project_tags
@@ -214,6 +221,7 @@ resource "aws_lambda_function" "recognize_face" {
       FACE_COLLECTION_ID = var.face_collection_id
       DYNAMO_TABLE_NAME  = aws_dynamodb_table.face_metadata.name
       BUCKET_NAME        = aws_s3_bucket.face_images.bucket
+      REKOGNITION_REGION = var.rekognition_region
     }
   }
   tags = var.project_tags

@@ -4,6 +4,12 @@ variable "region" {
   default     = "us-east-1"
 }
 
+variable "rekognition_region" {
+  description = "Region where Rekognition resources are deployed"
+  type        = string
+  default     = "us-east-1"
+}
+
 variable "lambda_runtime" {
   description = "Lambda runtime"
   type        = string

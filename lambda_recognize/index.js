@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk');
 const s3 = new AWS.S3();
-const rekognition = new AWS.Rekognition();
+// Rekognition collection may live in a different region.
+const rekognitionRegion = process.env.REKOGNITION_REGION || process.env.AWS_REGION;
+const rekognition = new AWS.Rekognition({ region: rekognitionRegion });
 const dynamo = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = async (event) => {
