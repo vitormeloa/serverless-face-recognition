@@ -42,6 +42,11 @@ face-recognition-terraform/
    If your default region does not support Rekognition (e.g., `sa-east-1`),
    edit `terraform.tfvars` and set `rekognition_region` to a supported region
    like `us-east-1` so the Rekognition collection is created there.
+
+   If you encounter an `AuthorizationHeaderMalformed` error about the wrong
+   region while creating the S3 bucket, ensure the `region` variable in
+   `terraform.tfvars` matches your AWS credentials' region (for example
+   `eu-central-1`).
 3. **Initialize**:
    ```bash
    terraform init
