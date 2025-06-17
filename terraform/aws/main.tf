@@ -169,13 +169,16 @@ data "aws_iam_policy_document" "recognize_face_policy" {
 
 data "archive_file" "register_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/../lambda_register"
+  # Package the RegisterFace Lambda code from the repository root
+  # Use ../../ to walk up from terraform/aws to the repo root
+  source_dir  = "${path.module}/../../lambda_register"
   output_path = "${path.module}/lambda_register.zip"
 }
 
 data "archive_file" "recognize_zip" {
   type        = "zip"
-  source_dir  = "${path.module}/../lambda_recognize"
+  # Package the RecognizeFace Lambda code from the repository root
+  source_dir  = "${path.module}/../../lambda_recognize"
   output_path = "${path.module}/lambda_recognize.zip"
 }
 
@@ -290,7 +293,6 @@ resource "aws_api_gateway_deployment" "prod" {
     aws_api_gateway_integration.recognize_integration
   ]
   rest_api_id = aws_api_gateway_rest_api.face_api.id
-  stage_name  = "prod"
 }
 
 resource "aws_api_gateway_stage" "prod" {
