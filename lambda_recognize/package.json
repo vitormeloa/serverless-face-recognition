@@ -1,7 +1,0 @@
-{
-  "name": "lambda-recognize-face",
-  "version": "1.0.0",
-  "description": "Recognize face Lambda function",
-  "main": "index.js",
-  "dependencies": {}
-}

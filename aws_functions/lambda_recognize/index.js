@@ -13,38 +13,42 @@ exports.handler = async (event) => {
     if (!imageBase64) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ message: 'Missing imageBase64' })
+        body      : JSON.stringify({ message: 'Missing imageBase64' })
       };
     }
 
     const buffer = Buffer.from(imageBase64, 'base64');
-    const key = `recognize/${Date.now()}.jpg`;
+    const key    = `recognize/${Date.now()}.jpg`;
+
+    // 1) Grava a imagem em S3 para o Rekognition ler
     await s3.putObject({
-      Bucket: process.env.BUCKET_NAME,
-      Key: key,
-      Body: buffer,
-      ContentType: 'image/jpeg'
+      Bucket      : process.env.BUCKET_NAME,
+      Key         : key,
+      Body        : buffer,
+      ContentType : 'image/jpeg'
     }).promise();
 
+    // 2) Chama o Rekognition pontuando para o objeto
     const searchResp = await rekognition.searchFacesByImage({
-      CollectionId: process.env.FACE_COLLECTION_ID,
-      Image: { S3Object: { Bucket: process.env.BUCKET_NAME, Key: key } },
-      FaceMatchThreshold: 90
+      CollectionId       : process.env.FACE_COLLECTION_ID,
+      Image              : { S3Object: { Bucket: process.env.BUCKET_NAME, Name: key } },
+      FaceMatchThreshold : 90
     }).promise();
 
     let response;
     if (searchResp.FaceMatches && searchResp.FaceMatches.length > 0) {
-      const match = searchResp.FaceMatches[0];
+      const match  = searchResp.FaceMatches[0];
       const faceId = match.Face.FaceId;
-      const item = await dynamo.get({
-        TableName: process.env.DYNAMO_TABLE_NAME,
-        Key: { faceId }
+      const item   = await dynamo.get({
+        TableName : process.env.DYNAMO_TABLE_NAME,
+        Key       : { faceId }
       }).promise();
+
       response = {
-        recognized: true,
+        recognized : true,
         faceId,
-        userId: item.Item ? item.Item.userId : null,
-        confidence: match.Similarity
+        userId     : item.Item ? item.Item.userId : null,
+        confidence : match.Similarity
       };
     } else {
       response = { recognized: false, message: 'No matching face found' };
@@ -55,13 +59,13 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify(response)
+      body      : JSON.stringify(response)
     };
   } catch (err) {
     console.error(err);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Internal server error' })
+      body      : JSON.stringify({ message: 'Internal server error' })
     };
   }
 };
