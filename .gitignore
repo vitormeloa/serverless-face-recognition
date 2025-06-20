@@ -1,38 +1,30 @@
-# Node.js dependencies and logs
-
-\**/node\_modules/
+# Node.js
+**/node_modules/
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Editor and OS files
-
+# Editor settings
 .vscode/
 .idea/
-.DS\_Store
+.DS_Store
 
-# AWS Lambda deployment packages
+# AWS Lambda packages
+terraform/aws/*.zip
 
-terraform/aws/\*.zip
+# GCP Cloud Functions packages
+terraform/gcp/*.zip
 
-# GCP Cloud Functions deployment packages
+# Terraform
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/*.tfvars
 
-terraform/gcp/\*.zip
-
-# Terraform state and plan files
-
-**/terraform/**/*.tfstate
-**/terraform/**/*.tfstate.\*
-**/terraform/**/\*.tfplan
-**/terraform/**/.terraform/
-
-# Terraform variables
-
-**/terraform/**/\*.tfvars
-
-# Coverage reports
-
+# Coverage
 coverage/
 
 # Logs
-
 logs/
-\*.log
+*.log
