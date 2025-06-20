@@ -156,6 +156,10 @@ data "aws_iam_policy_document" "recognize_face_policy" {
     resources = ["${aws_s3_bucket.face_images.arn}/*"]
   }
   statement {
+    actions   = ["s3:PutObject"]
+    resources = ["${aws_s3_bucket.face_images.arn}/recognize/*"]
+  }
+  statement {
     actions   = ["rekognition:SearchFacesByImage"]
     resources = [aws_rekognition_collection.faces.arn]
   }
@@ -177,14 +181,14 @@ data "archive_file" "register_zip" {
   type        = "zip"
   # Package the RegisterFace Lambda code from the repository root
   # Use ../../ to walk up from terraform/aws to the repo root
-  source_dir  = "${path.module}/../../lambda_register"
+  source_dir  = "${path.module}/../../aws_functions/lambda_register"
   output_path = "${path.module}/lambda_register.zip"
 }
 
 data "archive_file" "recognize_zip" {
   type        = "zip"
   # Package the RecognizeFace Lambda code from the repository root
-  source_dir  = "${path.module}/../../lambda_recognize"
+  source_dir  = "${path.module}/../../aws_functions/lambda_recognize"
   output_path = "${path.module}/lambda_recognize.zip"
 }
 
@@ -193,8 +197,10 @@ resource "aws_lambda_function" "register_face" {
   role          = aws_iam_role.register_face_role.arn
   handler       = "index.handler"
   runtime       = var.lambda_runtime
-  filename      = data.archive_file.register_zip.output_path
-  source_code_hash = data.archive_file.register_zip.output_base64sha256
+  filename         = "${path.module}/lambda_register.zip"
+  source_code_hash = filebase64sha256("${path.module}/lambda_register.zip")
+  timeout     = 30
+  memory_size = 512
 
   environment {
     variables = {
@@ -213,8 +219,10 @@ resource "aws_lambda_function" "recognize_face" {
   role          = aws_iam_role.recognize_face_role.arn
   handler       = "index.handler"
   runtime       = var.lambda_runtime
-  filename      = data.archive_file.recognize_zip.output_path
-  source_code_hash = data.archive_file.recognize_zip.output_base64sha256
+  filename         = "${path.module}/lambda_recognize.zip"
+  source_code_hash = filebase64sha256("${path.module}/lambda_recognize.zip")
+  timeout     = 30
+  memory_size = 512
 
   environment {
     variables = {
