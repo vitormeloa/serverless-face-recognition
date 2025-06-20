@@ -20,7 +20,7 @@ terraform/gcp/*.zip
 **/*.tfstate
 **/*.tfstate.*
 **/*.tfplan
-**/*.tfvars
+#**/*.tfvars
 
 # Coverage
 coverage/
