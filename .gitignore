@@ -1,0 +1,38 @@
+# Node.js dependencies and logs
+
+\**/node\_modules/
+npm-debug.log*
+
+# Editor and OS files
+
+.vscode/
+.idea/
+.DS\_Store
+
+# AWS Lambda deployment packages
+
+terraform/aws/\*.zip
+
+# GCP Cloud Functions deployment packages
+
+terraform/gcp/\*.zip
+
+# Terraform state and plan files
+
+**/terraform/**/*.tfstate
+**/terraform/**/*.tfstate.\*
+**/terraform/**/\*.tfplan
+**/terraform/**/.terraform/
+
+# Terraform variables
+
+**/terraform/**/\*.tfvars
+
+# Coverage reports
+
+coverage/
+
+# Logs
+
+logs/
+\*.log
