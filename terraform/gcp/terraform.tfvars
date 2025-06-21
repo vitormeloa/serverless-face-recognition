@@ -1,4 +1,4 @@
-gcp_project_id      = "my-gcp-project"
+gcp_project_id      = "serverless-face-recognition"
 gcp_region          = "us-central1"
 bucket_name         = "face-images-gcp-comparison"
 firestore_database  = "(default)"
