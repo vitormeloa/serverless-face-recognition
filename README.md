@@ -41,9 +41,15 @@ Both deployments expose `/register` and `/recognize` HTTP endpoints through the 
 4. After apply, note the outputs for `register_endpoint` and `recognize_endpoint`.
 5. Test:
     ```bash
+    # Register
     curl -X POST $(terraform output -raw register_endpoint) \
       -H "Content-Type: application/json" \
-      -d '{"userId":"user123","imageBase64":"<BASE64>"}'
+      -d @../../tests/payloads/register_payload.json
+    
+    # Recognize
+    curl -X POST $(terraform output -raw recognize_endpoint) \
+      -H "Content-Type: application/json" \
+      -d @../../tests/payloads/recognize_payload.json
     ```
 6. Destroy resources when finished:
     ```bash
@@ -71,14 +77,20 @@ Both deployments expose `/register` and `/recognize` HTTP endpoints through the 
 4. Example tests:
     ```bash
     # Direct Cloud Function
+    # Register
     curl -X POST $(terraform output -raw gcp_register_function_url) \
       -H "Content-Type: application/json" \
-      -d '{"userId":"user123","imageBase64":"<BASE64>"}'
+      -d @../../tests/payloads/register_payload.json
+    
+    # Recognize
+    curl -X POST $(terraform output -raw gcp_recognize_function_url) \
+      -H "Content-Type: application/json" \
+      -d @../../tests/payloads/recognize_payload.json
 
     # Via API Gateway
     curl -X POST https://$(terraform output -raw gcp_api_gateway_url)/register \
       -H "Content-Type: application/json" \
-      -d '{"userId":"user123","imageBase64":"<BASE64>"}'
+      -d @../../tests/payloads/register_payload.json
     ```
 5. Destroy resources when finished:
     ```bash
