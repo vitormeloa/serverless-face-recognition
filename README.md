@@ -4,16 +4,21 @@ This project contains a sample facial recognition API implemented on **AWS** and
 
 ```
 .
+├── aws_functions/           # AWS Lambda functions
+├── gcp_functions/           # GCP Cloud Functions
+├── tests/payloads/          # Sample JSON requests
 ├── terraform/
 │   ├── aws/                 # Terraform for AWS
 │   └── gcp/                 # Terraform for GCP
-├── lambda_register/         # AWS Lambda code
-├── lambda_recognize/        # AWS Lambda code
-├── gcp_functions/           # GCP Cloud Function code
 └── README.md
 ```
 
 Both deployments expose `/register` and `/recognize` HTTP endpoints through the respective API gateways. Images are stored with versioning, metadata is kept in a database (DynamoDB or Firestore), and notifications are sent (SNS or Pub/Sub).
+## Running Locally
+1. Install [Terraform](https://www.terraform.io/downloads.html).
+2. Deploy one of the providers using the steps below.
+3. Example JSON requests are stored under `tests/payloads/` and can be used with `curl` when calling the deployed endpoints.
+
 
 ## Deploying on AWS
 1. Install [Terraform](https://www.terraform.io/downloads.html).
@@ -43,7 +48,11 @@ Both deployments expose `/register` and `/recognize` HTTP endpoints through the 
     ```bash
     curl -X POST $(terraform output -raw register_endpoint) \
       -H "Content-Type: application/json" \
-      -d '{"userId":"user123","imageBase64":"<BASE64>"}'
+      -d @../../tests/payloads/register_payload.json
+
+    curl -X POST $(terraform output -raw recognize_endpoint) \
+      -H "Content-Type: application/json" \
+      -d @../../tests/payloads/recognize_payload.json
     ```
 6. Destroy resources when finished:
     ```bash
@@ -73,12 +82,16 @@ Both deployments expose `/register` and `/recognize` HTTP endpoints through the 
     # Direct Cloud Function
     curl -X POST $(terraform output -raw gcp_register_function_url) \
       -H "Content-Type: application/json" \
-      -d '{"userId":"user123","imageBase64":"<BASE64>"}'
+      -d @../../tests/payloads/register_payload.json
+
+    curl -X POST $(terraform output -raw gcp_recognize_function_url) \
+      -H "Content-Type: application/json" \
+      -d @../../tests/payloads/recognize_payload.json
 
     # Via API Gateway
     curl -X POST https://$(terraform output -raw gcp_api_gateway_url)/register \
       -H "Content-Type: application/json" \
-      -d '{"userId":"user123","imageBase64":"<BASE64>"}'
+      -d @../../tests/payloads/register_payload.json
     ```
 5. Destroy resources when finished:
     ```bash
