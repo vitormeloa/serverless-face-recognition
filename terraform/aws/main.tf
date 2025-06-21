@@ -21,10 +21,6 @@ provider "aws" {
 }
 
 #############################
-# This AWS-specific config complements the GCP version under ../gcp
-#############################
-
-#############################
 # S3 bucket for storing images
 #############################
 resource "aws_s3_bucket" "face_images" {
@@ -132,18 +128,22 @@ data "aws_iam_policy_document" "register_face_policy" {
     actions = ["s3:PutObject", "s3:GetObject"]
     resources = ["${aws_s3_bucket.face_images.arn}/*"]
   }
+
   statement {
     actions   = ["rekognition:IndexFaces"]
     resources = [aws_rekognition_collection.faces.arn]
   }
+
   statement {
     actions   = ["dynamodb:PutItem", "dynamodb:GetItem"]
     resources = [aws_dynamodb_table.face_metadata.arn]
   }
+
   statement {
     actions   = ["sns:Publish"]
     resources = [aws_sns_topic.face_registration.arn]
   }
+
   statement {
     actions = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
     resources = ["arn:aws:logs:*:*:*"]
@@ -155,18 +155,22 @@ data "aws_iam_policy_document" "recognize_face_policy" {
     actions   = ["s3:GetObject"]
     resources = ["${aws_s3_bucket.face_images.arn}/*"]
   }
+
   statement {
     actions   = ["s3:PutObject"]
     resources = ["${aws_s3_bucket.face_images.arn}/recognize/*"]
   }
+
   statement {
     actions   = ["rekognition:SearchFacesByImage"]
     resources = [aws_rekognition_collection.faces.arn]
   }
+
   statement {
     actions   = ["dynamodb:GetItem"]
     resources = [aws_dynamodb_table.face_metadata.arn]
   }
+
   statement {
     actions = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
     resources = ["arn:aws:logs:*:*:*"]
@@ -197,8 +201,8 @@ resource "aws_lambda_function" "register_face" {
   role          = aws_iam_role.register_face_role.arn
   handler       = "index.handler"
   runtime       = var.lambda_runtime
-  filename         = "${path.module}/lambda_register.zip"
-  source_code_hash = filebase64sha256("${path.module}/lambda_register.zip")
+  filename         = data.archive_file.register_zip.output_path
+  source_code_hash = data.archive_file.register_zip.output_base64sha256
   timeout     = 30
   memory_size = 512
 
@@ -219,8 +223,8 @@ resource "aws_lambda_function" "recognize_face" {
   role          = aws_iam_role.recognize_face_role.arn
   handler       = "index.handler"
   runtime       = var.lambda_runtime
-  filename         = "${path.module}/lambda_recognize.zip"
-  source_code_hash = filebase64sha256("${path.module}/lambda_recognize.zip")
+  filename         = data.archive_file.recognize_zip.output_path
+  source_code_hash = data.archive_file.recognize_zip.output_base64sha256
   timeout     = 30
   memory_size = 512
 
@@ -318,10 +322,10 @@ resource "aws_api_gateway_stage" "prod" {
   tags       = var.project_tags
 }
 
-
 #################################
 # Optional weekly cleanup rule
 #################################
+
 resource "aws_cloudwatch_event_rule" "weekly_cleanup" {
   name                = "WeeklyCleanupRule"
   schedule_expression = "rate(7 days)"
