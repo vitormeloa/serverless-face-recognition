@@ -30,11 +30,11 @@ variable "pubsub_topic_name" {
 variable "gcp_function_runtime" {
   description = "Cloud Function runtime"
   type        = string
-  default     = "nodejs14"
+  default     = "nodejs18"
 }
 
 variable "gcp_function_timeout" {
   description = "Function timeout"
-  type        = string
-  default     = "60s"
+  type        = number
+  default     = "60"
 }
