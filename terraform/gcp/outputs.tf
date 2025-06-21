@@ -10,5 +10,5 @@ output "gcp_recognize_function_url" {
 
 output "gcp_api_gateway_url" {
   description = "Base URL for API Gateway"
-  value       = google_api_gateway_gateway.face_gateway.default_hostname
+  value = "https://${google_api_gateway_gateway.face_gateway.default_hostname}"
 }
