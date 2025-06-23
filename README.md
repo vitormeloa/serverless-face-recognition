@@ -7,9 +7,15 @@ This project contains a sample facial recognition API implemented on **AWS** and
 ├── terraform/
 │   ├── aws/                 # Terraform for AWS
 │   └── gcp/                 # Terraform for GCP
-├── lambda_register/         # AWS Lambda code
-├── lambda_recognize/        # AWS Lambda code
-├── gcp_functions/           # GCP Cloud Function code
+├── aws_functions/      # AWS Functions
+│   ├── lambda_register/       # AWS Lambda code
+│   └── lambda_recognize/      # AWS Lambda code
+├── gcp_functions/     # GCP Cloud Function code
+│   ├── register/              # Register (GCP)
+│   └── recognize/             # Recognize (GCP)
+├── tests/           # Tests
+│   ├── images/                 # People Images
+│   └── payloads/    
 └── README.md
 ```
 
